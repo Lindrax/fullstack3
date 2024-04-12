@@ -92,10 +92,6 @@ app.post('/api/persons', (request, response) => {
     id: generateId(),
   }
 
-  console.log("hei")
-  
-  
-
   persons = persons.concat(person)
   response.json(person)
 })
