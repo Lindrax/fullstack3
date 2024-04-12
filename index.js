@@ -4,6 +4,9 @@ app.use(express.json())
 var morgan = require('morgan')
 morgan.token('body', (req) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :response-time ms - :body'));
+const cors = require('cors')
+app.use(cors())
+app.use(express.static('dist'))
 
 let persons = [
   
@@ -103,7 +106,7 @@ const generateId = () => {
 }
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
