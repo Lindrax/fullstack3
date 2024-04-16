@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 app.use(express.json())
@@ -8,8 +9,10 @@ const cors = require('cors')
 app.use(cors())
 app.use(express.static('dist'))
 
+const Person = require('./models/person')
+
+
 let persons = [
-  
       { 
         "name": "Arto Hellas", 
         "number": "040-123456",
@@ -32,9 +35,7 @@ let persons = [
       }
     ]
   
-    app.get('/', (request, response) => {
-      response.send('<h1>Hello World!</h1>')
-    })
+
 
     app.get('/info', (request, response) => {
       let n = persons.length
@@ -47,19 +48,17 @@ let persons = [
     })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
-})
+  })
+  })
+
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
@@ -86,14 +85,15 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
     id: generateId(),
-  }
+  })
 
-  persons = persons.concat(person)
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 const generateId = () => {
@@ -102,7 +102,7 @@ const generateId = () => {
 }
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
