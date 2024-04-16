@@ -14,21 +14,16 @@ app.use(cors())
 
 const Person = require('./models/person')
 
-
-let n =
-
-
-
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)
-    n= persons.length
+    n = persons.length
   })
 })
 
 app.get('/info', (request, response) => {
   const res =`
-    <p>Phonebook has info for ${n} people</p>
+    <p>Phonebook has info for ${Person.length} people</p>
     <p> ${new Date()}</p>
     </body>
   `
@@ -56,17 +51,13 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  const duplicate = persons.filter(person => person.name === body.name).length
+  
   if (!body.name || !body.number) {
     return response.status(400).json({
       error : 'name or number missing'
     })
   }
-  if (duplicate != 0) {
-    return response.status(400).json({
-      error : 'name must be unique'
-    })
-  }
+
 
   const person = new Person({
     name: body.name,
