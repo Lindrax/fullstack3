@@ -13,17 +13,21 @@ const cors = require('cors')
 app.use(cors())
 
 const Person = require('./models/person')
+let n = 0
 
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
-    response.json(persons)
+    console.log(persons.length)
     n = persons.length
+    response.json(persons)
   })
 })
 
 app.get('/info', (request, response) => {
+  
+
   const res =`
-    <p>Phonebook has info for ${Person.length} people</p>
+    <p>Phonebook has info for ${n} people</p>
     <p> ${new Date()}</p>
     </body>
   `
